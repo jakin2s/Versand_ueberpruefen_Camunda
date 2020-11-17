@@ -17,7 +17,7 @@ public class HandlerConfiguration {
 
 	@Bean
 	public void createTopicSubscriberHandler() {
-		ExponentialBackoffStrategy fetchTimer = new ExponentialBackoffStrategy(1000L, 2, 1000L);
+		ExponentialBackoffStrategy fetchTimer = new ExponentialBackoffStrategy(500L, 2, 500L);
 		int maxTasksToFetchWithinOnRequest = 1;
 		
 		ExternalTaskClient externalTaskClient = ExternalTaskClient
@@ -27,13 +27,7 @@ public class HandlerConfiguration {
 				.build();
 		
 		externalTaskClient
-		 .subscribe("Bearbeitungszeit_protokollieren")
-		 .handler((externalTask, externalTaskService) -> {
-		 
-		 }).open();
-		
-		externalTaskClient
-		 .subscribe("Versicherungsbedarf_pruefen")
+		 .subscribe("Versicherungsbedarf_prüfen")
 		 .handler((externalTask, externalTaskService) -> {
 			
 			try {
@@ -54,7 +48,6 @@ public class HandlerConfiguration {
 				}
 			}catch(Exception e) {
 				externalTaskService.handleBpmnError(externalTask, externalTask.getId(), "Something went wrong!" +e);
-				return;
 			}
 		}).open();
 	}
