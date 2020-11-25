@@ -27,7 +27,7 @@ public class HandlerConfiguration {
 				.build();
 		
 		externalTaskClient
-		 .subscribe("Versicherungsbedarf_prüfen")
+		 .subscribe("training_versicherungsbedarf_pruefen")
 		 .handler((externalTask, externalTaskService) -> {
 			
 			try {
@@ -50,5 +50,11 @@ public class HandlerConfiguration {
 				externalTaskService.handleBpmnError(externalTask, externalTask.getId(), "Something went wrong!" +e);
 			}
 		}).open();
+
+		externalTaskClient
+				.subscribe("Startzeit_festlegen")
+				.handler((externalTask, externalTaskService) -> {
+					externalTaskService.complete(externalTask);
+				}).open();
 	}
 }
