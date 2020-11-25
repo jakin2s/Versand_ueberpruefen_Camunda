@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1" camunda:diagramRelationId="b1326b70-21fe-4c80-9389-ece76699c13d">
+  <bpmn:collaboration id="Collaboration_151zvzr">
+    <bpmn:participant id="ComputerhandlerParticipant" name="Computerhändler" processRef="Process_91af96f9-0c94-4655-acf3-f5965b4ed6f4" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_91af96f9-0c94-4655-acf3-f5965b4ed6f4" name="Warenversand" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_1fqjlq7">
+      <bpmn:lane id="LogistikleiterLane" name="Logistikleiter">
+        <bpmn:flowNodeRef>VersicherungAbschliessenTask</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="SekretariatLane" name="Sekretariat">
+        <bpmn:flowNodeRef>Gateway_0sjr0uw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1ctq32t</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_113e3mw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SpediteurBeauftragenTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>PaketscheinAusfullenTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>MengeBestimmenTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>VersicherungNotigGateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_07kgmlq</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GrossereMengeGateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>VersicherungsbedarfPrufenTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AngeboteAuswahlenTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>N3AngeboteEinholenTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1i4m1go</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>VersandauftragBearbeitetEndEvent</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>VersandauftragErhaltenStartEvent</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0xvh37m</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="LagerarbeiterinLane" name="Lagerarbeiterin">
+        <bpmn:flowNodeRef>WareVersendenTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>WareVerpackenTask</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:parallelGateway id="Gateway_0sjr0uw">
+      <bpmn:incoming>Flow_0dwdj8m</bpmn:incoming>
+      <bpmn:incoming>Flow_00fohgr</bpmn:incoming>
+      <bpmn:outgoing>Flow_059o7cl</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="Gateway_1ctq32t">
+      <bpmn:incoming>Flow_0nteo76</bpmn:incoming>
+      <bpmn:incoming>Flow_1qnlr1u</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dwdj8m</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_113e3mw">
+      <bpmn:incoming>Flow_17e3h9y</bpmn:incoming>
+      <bpmn:incoming>NeinSequenceFlow</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nteo76</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:scriptTask id="SpediteurBeauftragenTask" name="Spediteur beauftragen" scriptFormat="javascript">
+      <bpmn:incoming>Flow_00wf7x5</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qnlr1u</bpmn:outgoing>
+      <bpmn:script>print ('Spediteur beauftragt')</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="PaketscheinAusfullenTask" name="Paketschein ausfüllen" scriptFormat="javascript">
+      <bpmn:incoming>JaSequenceFlow1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0p24ns5</bpmn:outgoing>
+      <bpmn:script>print ('der Paketschein wird ausgefüllt')</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="MengeBestimmenTask" name="Menge bestimmen" scriptFormat="javascript">
+      <bpmn:incoming>Flow_1b9hhjv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1labfwe</bpmn:outgoing>
+      <bpmn:script>bigOrder = false
+if (orderSize &gt; 10 ) {
+  bigOrder=true
+}
+
+print ('Bestellte Menge ' + orderSize)
+if (bigOrder)
+  print ('das ist eine große Menge: ')
+else
+  print ('das ist ein kleiner Auftrag')
+
+execution.setVariable('bigOrder',bigOrder)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="VersicherungNotigGateway" name="Versicherung nötig ?">
+      <bpmn:incoming>Flow_0pbksps</bpmn:incoming>
+      <bpmn:outgoing>JaSequenceFlow</bpmn:outgoing>
+      <bpmn:outgoing>NeinSequenceFlow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:parallelGateway id="Gateway_07kgmlq">
+      <bpmn:incoming>Flow_1jzarae</bpmn:incoming>
+      <bpmn:outgoing>Flow_1b9hhjv</bpmn:outgoing>
+      <bpmn:outgoing>Flow_109teyp</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:dataStoreReference id="DataStoreReference_1mpm8fa" name="Angebotsserver">
+      <bpmn:documentation>leben-standalone-angebotserver</bpmn:documentation>
+    </bpmn:dataStoreReference>
+    <bpmn:scriptTask id="WareVersendenTask" name="Ware versenden" scriptFormat="javascript">
+      <bpmn:incoming>Flow_059o7cl</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gnotr0</bpmn:outgoing>
+      <bpmn:script>executionTime=new Date().getTime()-execution.getVariable("orderTime")
+
+executionTime = executionTime /1000
+
+print ('----Auftrag ' + execution.getVariable("orderNumber") + '  Ware in '+ executionTime +' Sek. versendet, Danke an Robot ' + execution.getVariable("robotNumber") )</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="GrossereMengeGateway" name="Menge größer als 10?">
+      <bpmn:incoming>Flow_1labfwe</bpmn:incoming>
+      <bpmn:outgoing>JaSequenceFlow1</bpmn:outgoing>
+      <bpmn:outgoing>NeinSequenceFlow1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:scriptTask id="VersicherungAbschliessenTask" name="Versicherung abschließen" scriptFormat="javascript">
+      <bpmn:incoming>JaSequenceFlow</bpmn:incoming>
+      <bpmn:outgoing>Flow_17e3h9y</bpmn:outgoing>
+      <bpmn:script>print ('Versicherung wurde abgeschlossen!')</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="WareVerpackenTask" name="Ware verpacken" camunda:type="external" camunda:topic="wareVerpacken">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="failedJobRetryTimeCycle" value="R1/PT1S" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_109teyp</bpmn:incoming>
+      <bpmn:outgoing>Flow_00fohgr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="VersicherungsbedarfPrufenTask" name="Versicherungs-bedarf prüfen" camunda:type="external" camunda:topic="training_versicherungsbedarf_pruefen">
+      <bpmn:incoming>Flow_0p24ns5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pbksps</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="AngeboteAuswahlenTask" name="Angebote auswählen" camunda:type="external" camunda:topic="training_angebot_waehlen">
+      <bpmn:documentation>leben-camunda-angebotwaehlen</bpmn:documentation>
+      <bpmn:incoming>Flow_0rky1cz</bpmn:incoming>
+      <bpmn:outgoing>Flow_00wf7x5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="N3AngeboteEinholenTask" name="3 Angebote einholen" camunda:type="external" camunda:topic="training_angebot_einholen">
+      <bpmn:documentation>leben-camunda-angeboteinholen</bpmn:documentation>
+      <bpmn:incoming>NeinSequenceFlow1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rky1cz</bpmn:outgoing>
+      <bpmn:property id="Property_1mlqlxr" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0p5r5jo">
+        <bpmn:sourceRef>DataStoreReference_1mpm8fa</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1mlqlxr</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:serviceTask>
+    <bpmn:dataStoreReference id="DataStoreReference_1l3ig40" name="Monitoring Server">
+      <bpmn:documentation>leben.standalone-monitoring</bpmn:documentation>
+    </bpmn:dataStoreReference>
+    <bpmn:serviceTask id="Activity_1i4m1go" name="Berabeitungs-zeit protokollieren" camunda:type="external" camunda:topic="Bearbeitungszeit_protokollieren">
+      <bpmn:documentation>leben-camunda-protokollieren</bpmn:documentation>
+      <bpmn:incoming>Flow_1gnotr0</bpmn:incoming>
+      <bpmn:outgoing>Flow_03y8g98</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_0zn4yoj">
+        <bpmn:targetRef>DataStoreReference_1l3ig40</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="VersandauftragBearbeitetEndEvent" name="Versandauftrag bearbeitet">
+      <bpmn:incoming>Flow_03y8g98</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:startEvent id="VersandauftragErhaltenStartEvent" name="Versandauftrag erhalten">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">execution.setVariable('orderTime',new Date().getTime())</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_11ixiao</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_12fbaxh" messageRef="Message_18gk3m2" />
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_0xvh37m" name="Startzeit bestimmen" camunda:type="external" camunda:topic="Startzeit_festlegen">
+      <bpmn:incoming>Flow_11ixiao</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jzarae</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_03y8g98" sourceRef="Activity_1i4m1go" targetRef="VersandauftragBearbeitetEndEvent" />
+    <bpmn:sequenceFlow id="Flow_00fohgr" sourceRef="WareVerpackenTask" targetRef="Gateway_0sjr0uw" />
+    <bpmn:sequenceFlow id="Flow_059o7cl" sourceRef="Gateway_0sjr0uw" targetRef="WareVersendenTask" />
+    <bpmn:sequenceFlow id="Flow_1gnotr0" sourceRef="WareVersendenTask" targetRef="Activity_1i4m1go" />
+    <bpmn:sequenceFlow id="Flow_11ixiao" sourceRef="VersandauftragErhaltenStartEvent" targetRef="Activity_0xvh37m" />
+    <bpmn:sequenceFlow id="Flow_1b9hhjv" sourceRef="Gateway_07kgmlq" targetRef="MengeBestimmenTask" />
+    <bpmn:sequenceFlow id="Flow_109teyp" sourceRef="Gateway_07kgmlq" targetRef="WareVerpackenTask" />
+    <bpmn:sequenceFlow id="Flow_1labfwe" sourceRef="MengeBestimmenTask" targetRef="GrossereMengeGateway" />
+    <bpmn:sequenceFlow id="JaSequenceFlow1" name="ja" sourceRef="GrossereMengeGateway" targetRef="PaketscheinAusfullenTask">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${not bigOrder}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="NeinSequenceFlow1" name="nein" sourceRef="GrossereMengeGateway" targetRef="N3AngeboteEinholenTask">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${bigOrder}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0p24ns5" sourceRef="PaketscheinAusfullenTask" targetRef="VersicherungsbedarfPrufenTask" />
+    <bpmn:sequenceFlow id="Flow_0pbksps" sourceRef="VersicherungsbedarfPrufenTask" targetRef="VersicherungNotigGateway" />
+    <bpmn:sequenceFlow id="Flow_0rky1cz" sourceRef="N3AngeboteEinholenTask" targetRef="AngeboteAuswahlenTask" />
+    <bpmn:sequenceFlow id="Flow_00wf7x5" sourceRef="AngeboteAuswahlenTask" targetRef="SpediteurBeauftragenTask" />
+    <bpmn:sequenceFlow id="JaSequenceFlow" name="ja" sourceRef="VersicherungNotigGateway" targetRef="VersicherungAbschliessenTask">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${insureOrder}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_17e3h9y" sourceRef="VersicherungAbschliessenTask" targetRef="Gateway_113e3mw" />
+    <bpmn:sequenceFlow id="NeinSequenceFlow" name="nein" sourceRef="VersicherungNotigGateway" targetRef="Gateway_113e3mw">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${not insureOrder}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0nteo76" sourceRef="Gateway_113e3mw" targetRef="Gateway_1ctq32t" />
+    <bpmn:sequenceFlow id="Flow_1qnlr1u" sourceRef="SpediteurBeauftragenTask" targetRef="Gateway_1ctq32t" />
+    <bpmn:sequenceFlow id="Flow_0dwdj8m" sourceRef="Gateway_1ctq32t" targetRef="Gateway_0sjr0uw" />
+    <bpmn:sequenceFlow id="Flow_1jzarae" sourceRef="Activity_0xvh37m" targetRef="Gateway_07kgmlq" />
+    <bpmn:textAnnotation id="TextAnnotation_1eiz8np">
+      <bpmn:text>Behandelt das Thema Spring Cloud Contract</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_08gdyd8">
+      <bpmn:text>Behandelt das Thema Akzeptanztests</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1hq9fxf">
+      <bpmn:text>Behandelt das Thema External Worker</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_02do9jm">
+      <bpmn:text>leben.standalone-monitoring</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0r4umig" sourceRef="VersicherungsbedarfPrufenTask" targetRef="TextAnnotation_1hq9fxf" />
+    <bpmn:association id="Association_0n7svsf" sourceRef="AngeboteAuswahlenTask" targetRef="TextAnnotation_08gdyd8" />
+    <bpmn:association id="Association_0zrl2b0" sourceRef="N3AngeboteEinholenTask" targetRef="TextAnnotation_1eiz8np" />
+    <bpmn:association id="Association_14bt7h5" sourceRef="DataStoreReference_1l3ig40" targetRef="TextAnnotation_02do9jm" />
+  </bpmn:process>
+  <bpmn:message id="Message_18gk3m2" name="orderRecievedMessage" />
+  <bpmn:message id="Message_1rgp855" name="DiesIsteEineNeueMessage" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_151zvzr">
+      <bpmndi:BPMNShape id="Participant_1bbqexa_di" bpmnElement="ComputerhandlerParticipant" isHorizontal="true">
+        <dc:Bounds x="160" y="62" width="2200" height="718" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1mqvgxw_di" bpmnElement="LogistikleiterLane" isHorizontal="true">
+        <dc:Bounds x="190" y="62" width="2170" height="231" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1uw6k34_di" bpmnElement="SekretariatLane" isHorizontal="true">
+        <dc:Bounds x="190" y="293" width="2170" height="347" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0hhccwn_di" bpmnElement="LagerarbeiterinLane" isHorizontal="true">
+        <dc:Bounds x="190" y="640" width="2170" height="140" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1eiz8np_di" bpmnElement="TextAnnotation_1eiz8np">
+        <dc:Bounds x="700" y="529" width="141" height="42" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_08gdyd8_di" bpmnElement="TextAnnotation_08gdyd8">
+        <dc:Bounds x="1100" y="550" width="139" height="43" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1hq9fxf_di" bpmnElement="TextAnnotation_1hq9fxf">
+        <dc:Bounds x="1070" y="220" width="137" height="38" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_02do9jm_di" bpmnElement="TextAnnotation_02do9jm">
+        <dc:Bounds x="2140" y="529" width="180" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_03y8g98_di" bpmnElement="Flow_03y8g98">
+        <di:waypoint x="2120" y="408" />
+        <di:waypoint x="2172" y="408" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00fohgr_di" bpmnElement="Flow_00fohgr">
+        <di:waypoint x="678" y="720" />
+        <di:waypoint x="1670" y="720" />
+        <di:waypoint x="1670" y="433" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_059o7cl_di" bpmnElement="Flow_059o7cl">
+        <di:waypoint x="1695" y="408" />
+        <di:waypoint x="1790" y="408" />
+        <di:waypoint x="1790" y="720" />
+        <di:waypoint x="1840" y="720" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gnotr0_di" bpmnElement="Flow_1gnotr0">
+        <di:waypoint x="1940" y="720" />
+        <di:waypoint x="1971" y="720" />
+        <di:waypoint x="1971" y="408" />
+        <di:waypoint x="2020" y="408" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11ixiao_di" bpmnElement="Flow_11ixiao">
+        <di:waypoint x="288" y="408" />
+        <di:waypoint x="320" y="408" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1b9hhjv_di" bpmnElement="Flow_1b9hhjv">
+        <di:waypoint x="513" y="408" />
+        <di:waypoint x="578" y="408" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_109teyp_di" bpmnElement="Flow_109teyp">
+        <di:waypoint x="488" y="433" />
+        <di:waypoint x="488" y="720" />
+        <di:waypoint x="578" y="720" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1labfwe_di" bpmnElement="Flow_1labfwe">
+        <di:waypoint x="678" y="408" />
+        <di:waypoint x="725" y="408" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mm8efy_di" bpmnElement="JaSequenceFlow1">
+        <di:waypoint x="750" y="383" />
+        <di:waypoint x="750" y="348" />
+        <di:waypoint x="858" y="348" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="761" y="437" width="9" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hpmgmc_di" bpmnElement="NeinSequenceFlow1">
+        <di:waypoint x="750" y="433" />
+        <di:waypoint x="750" y="478" />
+        <di:waypoint x="858" y="478" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="759" y="361" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p24ns5_di" bpmnElement="Flow_0p24ns5">
+        <di:waypoint x="958" y="348" />
+        <di:waypoint x="1028" y="348" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pbksps_di" bpmnElement="Flow_0pbksps">
+        <di:waypoint x="1128" y="348" />
+        <di:waypoint x="1203" y="348" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rky1cz_di" bpmnElement="Flow_0rky1cz">
+        <di:waypoint x="958" y="478" />
+        <di:waypoint x="1028" y="478" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00wf7x5_di" bpmnElement="Flow_00wf7x5">
+        <di:waypoint x="1128" y="478" />
+        <di:waypoint x="1198" y="478" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1smwh0l_di" bpmnElement="JaSequenceFlow">
+        <di:waypoint x="1228" y="323" />
+        <di:waypoint x="1228" y="230" />
+        <di:waypoint x="1330" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1239" y="274" width="9" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17e3h9y_di" bpmnElement="Flow_17e3h9y">
+        <di:waypoint x="1430" y="230" />
+        <di:waypoint x="1490" y="230" />
+        <di:waypoint x="1490" y="323" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yxrf88_di" bpmnElement="NeinSequenceFlow">
+        <di:waypoint x="1253" y="348" />
+        <di:waypoint x="1465" y="348" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1272" y="330" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nteo76_di" bpmnElement="Flow_0nteo76">
+        <di:waypoint x="1515" y="348" />
+        <di:waypoint x="1570" y="348" />
+        <di:waypoint x="1570" y="383" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qnlr1u_di" bpmnElement="Flow_1qnlr1u">
+        <di:waypoint x="1298" y="478" />
+        <di:waypoint x="1570" y="478" />
+        <di:waypoint x="1570" y="433" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dwdj8m_di" bpmnElement="Flow_0dwdj8m">
+        <di:waypoint x="1595" y="408" />
+        <di:waypoint x="1645" y="408" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jzarae_di" bpmnElement="Flow_1jzarae">
+        <di:waypoint x="420" y="408" />
+        <di:waypoint x="463" y="408" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Gateway_12f14ft_di" bpmnElement="Gateway_0sjr0uw">
+        <dc:Bounds x="1645" y="383" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ctq32t_di" bpmnElement="Gateway_1ctq32t" isMarkerVisible="true">
+        <dc:Bounds x="1545" y="383" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_113e3mw_di" bpmnElement="Gateway_113e3mw" isMarkerVisible="true">
+        <dc:Bounds x="1465" y="323" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ogjsg2_di" bpmnElement="SpediteurBeauftragenTask">
+        <dc:Bounds x="1198" y="438" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vhnd43_di" bpmnElement="PaketscheinAusfullenTask">
+        <dc:Bounds x="858" y="308" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0tlb306_di" bpmnElement="MengeBestimmenTask">
+        <dc:Bounds x="578" y="368" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0vfqg1u_di" bpmnElement="VersicherungNotigGateway" isMarkerVisible="true">
+        <dc:Bounds x="1203" y="323" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1196" y="383" width="65" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_10drgbs_di" bpmnElement="Gateway_07kgmlq">
+        <dc:Bounds x="463" y="383" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataStoreReference_1mpm8fa_di" bpmnElement="DataStoreReference_1mpm8fa" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="883" y="555" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="869" y="612" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0x1qmcb_di" bpmnElement="WareVersendenTask">
+        <dc:Bounds x="1840" y="680" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0fn6wt5_di" bpmnElement="GrossereMengeGateway" isMarkerVisible="true">
+        <dc:Bounds x="725" y="383" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="776" y="414" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_166x2ax_di" bpmnElement="VersicherungAbschliessenTask">
+        <dc:Bounds x="1330" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0lv6c37_di" bpmnElement="WareVerpackenTask" bioc:stroke="black" bioc:fill="white">
+        <dc:Bounds x="578" y="680" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06szo9y_di" bpmnElement="VersicherungsbedarfPrufenTask" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="1028" y="308" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0va0pbb_di" bpmnElement="AngeboteAuswahlenTask" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="1028" y="438" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dkes1x_di" bpmnElement="N3AngeboteEinholenTask" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="858" y="438" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataStoreReference_1l3ig40_di" bpmnElement="DataStoreReference_1l3ig40" bioc:stroke="black" bioc:fill="white">
+        <dc:Bounds x="2045" y="525" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2026" y="582" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16wqqco_di" bpmnElement="Activity_1i4m1go" bioc:stroke="black" bioc:fill="white">
+        <dc:Bounds x="2020" y="368" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_00jdgvw_di" bpmnElement="VersandauftragBearbeitetEndEvent">
+        <dc:Bounds x="2172" y="390" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2152" y="353" width="75" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1kdlzrt_di" bpmnElement="VersandauftragErhaltenStartEvent">
+        <dc:Bounds x="252" y="390" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="232" y="433" width="75" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_174lce7_di" bpmnElement="Activity_0xvh37m">
+        <dc:Bounds x="320" y="368" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0r4umig_di" bpmnElement="Association_0r4umig">
+        <di:waypoint x="1093" y="308" />
+        <di:waypoint x="1111" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0n7svsf_di" bpmnElement="Association_0n7svsf">
+        <di:waypoint x="1111" y="518" />
+        <di:waypoint x="1138" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0zrl2b0_di" bpmnElement="Association_0zrl2b0">
+        <di:waypoint x="858" y="499" />
+        <di:waypoint x="786" y="529" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_14bt7h5_di" bpmnElement="Association_14bt7h5">
+        <di:waypoint x="2095" y="549" />
+        <di:waypoint x="2140" y="547" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0p5r5jo_di" bpmnElement="DataInputAssociation_0p5r5jo">
+        <di:waypoint x="908" y="555" />
+        <di:waypoint x="908" y="518" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_0zn4yoj_di" bpmnElement="DataOutputAssociation_0zn4yoj">
+        <di:waypoint x="2070" y="448" />
+        <di:waypoint x="2070" y="525" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+
+
